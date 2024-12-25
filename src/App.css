@@ -1,0 +1,78 @@
+/* .fullscreen-button {
+    padding: 5px 10px;
+    background-color: blue;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+  
+  .fullscreen-button:hover {
+    background-color: darkblue;
+  }
+  
+  .chart-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+   */
+    .switchbutton{
+        padding: 5px 10px;
+        background-color: rgb(101, 110, 101);
+        color: aliceblue;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-bottom: 10x;
+    }
+
+    .fullscreenbutton{
+
+        padding: 5px 10px;
+        background-color: rgb(69, 69, 128);
+        color: aliceblue;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-bottom: 10px;
+    }
+
+    .showtablebutton{
+        padding: 5px 10px;
+        background-color: rgb(104, 104, 159);
+        color: black;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-bottom: 10px;
+
+       
+    }
+
+   /* .tablecontent{
+    justify-content: center;
+    border-radius: 5px;
+    color: brown;
+    width: 100%;
+    padding: 10%;
+    margin-left: 20px;
+
+   } */
+
+   .tablecontent {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+  
+  .tablecontent th, .tablecontent td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  .tablecontent th {
+    background-color: #f4f4f4;
+    text-align: left;
+  }
