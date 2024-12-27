@@ -53,7 +53,7 @@ const SensorDataChart = () => {
       }
     };
 
-    const interval = setInterval(generateDummyData, 5000);
+    const interval = setInterval(generateDummyData, 1000);
     return () => clearInterval(interval);
   }, []);
 

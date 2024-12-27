@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
-
+import LineChartTable from "../Tables/LineChartTable"; // Correct path to your table component
 import "../App.css";
 
 const SensorDataChart = () => {
@@ -10,10 +10,10 @@ const SensorDataChart = () => {
   const [alarmData, setAlarmData] = useState([]);
   const [chartDimensions, setChartDimensions] = useState({
     width: window.innerWidth,
-    height: window.innerHeight - 50, // Adjust height as needed (e.g., minus header height)
+    height: window.innerHeight - 50,
   });
-  const [chartType, setChartType] = useState("line"); // Default is line chart
-  const [showTable, setShowTable] = useState(false); // State to toggle table visibility
+  const [chartType, setChartType] = useState("line");
+  const [showTable, setShowTable] = useState(false);
 
   const fullScreenHandle = useFullScreenHandle();
 
@@ -21,7 +21,7 @@ const SensorDataChart = () => {
     const handleResize = () => {
       setChartDimensions({
         width: window.innerWidth,
-        height: window.innerHeight - 50, // Adjust this value based on your design
+        height: window.innerHeight - 50,
       });
     };
 
@@ -43,24 +43,24 @@ const SensorDataChart = () => {
       if (newValue > 70) {
         const newAlarmPoint = {
           x: now.getTime(),
-          y: 0,
+          y: newValue, // Set the actual temperature value
           color: "red",
-          name: `Alarm Triggered: Value ${newValue}°C`,
+          name: `Alarm Triggered: ${newValue}°C`,
         };
         setAlarmData((prevData) => [...prevData, newAlarmPoint]);
       }
     };
 
-    const interval = setInterval(generateDummyData, 10000);
+    const interval = setInterval(generateDummyData, 6000);
     return () => clearInterval(interval);
   }, []);
 
   const options = {
     chart: {
-      type: chartType, // Dynamically set chart type (line or area)
+      type: chartType,
       zoomType: "x",
-      width: chartDimensions.width, // Dynamically set width
-      height: chartDimensions.height, // Dynamically set height
+      width: chartDimensions.width,
+      height: chartDimensions.height,
     },
     title: { text: "Temperature Monitoring Chart" },
     xAxis: { type: "datetime", title: { text: "Time" } },
@@ -76,15 +76,16 @@ const SensorDataChart = () => {
     },
     tooltip: {
       formatter: function () {
-        return this.series.name === "Alarms"
-          ? `<b>${this.point.name}</b><br/>Time: ${Highcharts.dateFormat(
-              "%Y-%m-%d %H:%M:%S",
-              this.x
-            )}`
-          : `Time: ${Highcharts.dateFormat(
-              "%Y-%m-%d %H:%M:%S",
-              this.x
-            )}<br/>Temperature: ${this.y}°C`;
+        if (this.series.name === "Alarms") {
+          return `<b>${this.point.name}</b><br/>Time: ${Highcharts.dateFormat(
+            "%Y-%m-%d %H:%M:%S",
+            this.x
+          )}<br/>Temperature: ${this.y}°C`;
+        }
+        return `Time: ${Highcharts.dateFormat(
+          "%Y-%m-%d %H:%M:%S",
+          this.x
+        )}<br/>Temperature: ${this.y}°C`;
       },
     },
     series: [
@@ -92,17 +93,18 @@ const SensorDataChart = () => {
         name: "Sensor Data",
         data: sensorData,
         color: "blue",
-        fillOpacity: chartType === "area" ? 0.3 : 0, // Set fill opacity only for area chart
+        fillOpacity: chartType === "area" ? 0.3 : 0,
       },
       {
         name: "Alarms",
         type: "scatter",
         data: alarmData,
-        marker: { symbol: "circle", radius: 5 },
+        color: "red",
+        marker: { symbol: "circle", radius: 6 },
       },
     ],
     credits: {
-      enabled: false, // Removes Highcharts.com watermark
+      enabled: false,
     },
     responsive: {
       rules: [
@@ -124,47 +126,6 @@ const SensorDataChart = () => {
   return (
     <>
       <div style={{ position: "relative" }}>
-        {/* Dropdown Menu */}
-        {/* <div
-        className="dropdown"
-        style={{
-          position: "absolute",
-          top: "8px",
-          right: "8px",
-          zIndex: 1000,
-        }}
-      >
-        <button
-          className="btn btn-secondary dropdown-toggle"
-          type="button"
-          id="dropdownMenuButton1"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          customize
-        </button>
-        <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-          <li>
-            <a className="dropdown-item" href="#">
-              Action
-            </a>
-          </li>
-          <li>
-            <a className="dropdown-item" href="#">
-              Another action
-            </a>
-          </li>
-          <li>
-            <a className="dropdown-item" href="#">
-              Something else here
-            </a>
-          </li>
-        </ul>
-      </div> */}
-
-        {/* Chart Controls */}
-        <div></div>
-
         <div className="container">
           <button
             className="switchbutton"
@@ -172,45 +133,18 @@ const SensorDataChart = () => {
           >
             Switch to {chartType === "line" ? "Area" : "Line"} Chart
           </button>
-
           <button className="fullscreenbutton" onClick={fullScreenHandle.enter}>
             Fullscreen
           </button>
-
-          {/* Button to toggle between chart and table */}
           <button
             className="showtablebutton"
             onClick={() => setShowTable(!showTable)}
-            style={{}}
           >
             {showTable ? "Show Chart" : "Show Table"}
           </button>
         </div>
-
-                                   {/* Conditionally render chart or table */}
-
         {showTable ? (
-          <table className="tablecontent" >
-            <thead>
-              <tr>
-                <th>Time</th>
-                <th>Sensor Value (°C)</th>
-                <th>Alarm</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...sensorData, ...alarmData].map((dataPoint, index) => (
-                <tr key={index}>
-                  <td>
-                    {Highcharts.dateFormat("%Y-%m-%d, %H:%M:%S", dataPoint.x)}
-                  </td>
-                  <td>{dataPoint.y}</td>
-                  <td>{dataPoint.y>70 ? "Alarm triggerd" : "Alrm not triggered"}</td>
-                  
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <LineChartTable sensorData={sensorData} alarmData={alarmData} />
         ) : (
           <FullScreen handle={fullScreenHandle}>
             <HighchartsReact highcharts={Highcharts} options={options} />
